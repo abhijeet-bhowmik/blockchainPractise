@@ -1,0 +1,81 @@
+#
+# Copyright IBM Corp All Rights Reserved
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+version: '2'
+
+networks:
+  network_1.0:
+    external:
+      name: blockchainpractiseproject_network_1.0
+
+services:
+  cli.newput.business.com:
+    container_name: cli.newput.business.com
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=debug
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.newput.business.com:7051
+      - CORE_PEER_LOCALMSPID=NewputMSP
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/newput.business.com/users/Admin@newput.business.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../BlockchainPractiseProject:/opt/gopath/src/github.com/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    networks:
+        - network_1.0
+    
+
+  cli.sentient.business.com:
+    container_name: cli.sentient.business.com
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=debug
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.sentient.business.com:7051
+      - CORE_PEER_LOCALMSPID=SentientMSP
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/sentient.business.com/users/Admin@sentient.business.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../BlockchainPractiseProject:/opt/gopath/src/github.com/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    networks:
+        - network_1.0
+    
+
+  cli.capitalcity.business.com:
+    container_name: cli.capitalcity.business.com
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=debug
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.capitalcity.business.com:7051
+      - CORE_PEER_LOCALMSPID=CapitalCityMSP
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/capitalcity.business.com/users/Admin@capitalcity.business.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../BlockchainPractiseProject:/opt/gopath/src/github.com/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    networks:
+        - network_1.0
+    

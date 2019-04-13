@@ -1,0 +1,22 @@
+{
+  "name": "transaction",
+  "version": "1.0.0",
+  "description": "Transaction chaincode",
+  "main": "index.js",
+  "scripts": {
+    "start": "node transaction-contract.js",
+    "test": "mocha"
+  },
+  "author": "Abhijeet Bhowmik",
+  "license": "ISC",
+  "dependencies": {
+    "fabric-shim": "^1.4.0",
+    "moment": "^2.24.0",
+    "nanoid": "^2.0.1"
+  },
+  "devDependencies": {
+    "@theledger/fabric-mock-stub": "^4.0.0",
+    "chai": "^4.2.0",
+    "mocha": "^6.0.2"
+  }
+}

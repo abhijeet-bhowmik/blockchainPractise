@@ -1,0 +1,4 @@
+Chaincode/*/node_modules
+
+crypto-config
+.DS_Store

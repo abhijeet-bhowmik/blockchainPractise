@@ -1,0 +1,27 @@
+peer chaincode invoke -o orderer.business.com:7050 -C primarychannel -c '{"Args":["transfer","{\"from\":\"\",\"to\":\"\",\"amount\":{\"KHOKHA\":1000,\"PETTI\":1000}}"]}' -n bank_contract
+
+
+
+[ 'transfer','{"from":"","to":"","amount":{"KHOKHA":1000,"PETTI":1000}}' ]
+
+
+
+{\"accountStatus\": \"ACTIVE\"}
+
+
+
+"{\"$and\":[{\"status\": \"LOCKED\"},{\"paid\":1}]}"
+
+
+
+peer chaincode invoke -o orderer.business.com:7050 -C primarychannel -c '{"Args":["getAccount","77889693603047"]}' -n bank_chaincode
+
+
+
+peer chaincode invoke -o orderer.business.com:7050 -C primarychannel -c '{"Args":["getChaincodeVersion"]}' -n bank_contract
+
+
+peer chaincode invoke -o orderer.business.com:7050 -C primarychannel -c '{"Args":["createAccount"]}' -n bank_chaincode --peerAddresses peer0.sentient.business.com:7051 --peerAddresses peer0.capitalcity.business.com:7051 --peerAddresses peer0.newput.business.com:7051
+
+
+--peerAddresses peer0.sentient.business.com:7051 --peerAddresses peer0.capitalcity.business.com:7051

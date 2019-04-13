@@ -1,0 +1,36 @@
+peer channel fetch config ./sharedVolume/config/config_block.pb -o orderer.business.com:7050 -c primarychannel
+
+
+/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/business.com/msp/tlscacerts
+
+cat ./crypto-config/peerOrganizations/onesky.business.com/users/Admin\@onesky.business.com/msp/signcerts/Admin\@onesky.business.com-cert.pem |base64 |tr -d '\n'
+cat ./crypto-config/peerOrganizations/onesky.business.com/ca/ca.onesky.business.com-cert.pem  |base64 |tr -d '\n'
+cat ./crypto-config/peerOrganizations/onesky.business.com/tlsca/tlsca.onesky.business.com-cert.pem |base64 |tr -d '\n'
+
+cat ./crypto-config/peerOrganizations/sentient.business.com/users/Admin\@sentient.business.com/msp/signcerts/Admin\@sentient.business.com-cert.pem |base64 |tr -d '\n'
+cat ./crypto-config/peerOrganizations/sentient.business.com/ca/ca.sentient.business.com-cert.pem  |base64 |tr -d '\n'
+cat ./crypto-config/peerOrganizations/sentient.business.com/tlsca/tlsca.sentient.business.com-cert.pem |base64 |tr -d '\n'
+
+curl -X POST --data-binary @config.json http://127.0.0.1:7059/protolator/encode/common.Config > ./aftermath/config.pb
+curl -X POST --data-binary @updated_config.json http://127.0.0.1:7059/protolator/encode/common.Config > ./aftermath/updated_config.pb
+
+
+curl -X POST -F original=@config.pb -F updated=@updated_config.pb http://127.0.0.1:7059/configtxlator/compute/update-from-configs -F channel=primarychannel > config_update.pb
+
+
+
+
+
+curl -X POST -F original=@config.pb -F updated=@updated_config.pb http://127.0.0.1:7059/configtxlator/compute/update-from-configs -F channel=primarychannel > config_update.pb
+
+
+
+echo '{"payload":{"header":{"channel_header":{"channel_id":"primarychannel", "type":2}},"data":{"config_update":'$(cat config_update.json)'}}}' > config_update_as_envelope.json
+
+curl -X POST --data-binary @config_update_as_envelope.json http://127.0.0.1:7059/protolator/encode/common.Envelope > config_update_as_envelope.pb
+
+
+peer channel signconfigtx -f config_update_as_envelope.pb -o orderer.business.com:7050
+
+
+peer channel update -f config_update_as_envelope.pb -o orderer.business.com:7050 -c primarychannel

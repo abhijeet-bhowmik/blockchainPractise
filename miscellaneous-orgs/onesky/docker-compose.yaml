@@ -1,0 +1,98 @@
+version: '2'
+
+networks:
+  network_1.0:
+    external:
+      name: blockchainpractiseproject_network_1.0
+
+services:
+  ca.onesky.business.com:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.onesky.business.com
+      - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.onesky.business.com-cert.pem
+      - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/ed946c5f91aa2ace4ddea7a3d7879413499d4b1b61e242ff375917107a466878_sk
+    ports:
+      - "10054:7054"
+    command: sh -c 'fabric-ca-server start -b root:root'
+    volumes:
+      - ./crypto-config/peerOrganizations/onesky.business.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.onesky.business.com
+    networks:
+      - network_1.0
+
+  peer0.onesky.business.com:
+    container_name: peer0.onesky.business.com
+    image: hyperledger/fabric-peer
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.onesky.business.com
+      - FABRIC_LOGGING_SPEC=debug
+      - CORE_CHAINCODE_LOGGING_LEVEL=debug
+      - CORE_PEER_LOCALMSPID=OneSkyMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer/
+      - CORE_PEER_ADDRESS=peer0.onesky.business.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.onesky.business.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.onesky.business.com:7051
+      
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=blockchainpractiseproject_network_1.0
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.onesky.business.com:5984
+      
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=root
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=root
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric 
+    command: peer node start
+    ports:
+      - 10051:7051
+      - 10053:7053
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/onesky.business.com/peers/peer0.onesky.business.com/msp:/etc/hyperledger/msp/peer
+        - ./crypto-config/peerOrganizations/onesky.business.com/users:/etc/hyperledger/msp/users
+        - ./config:/etc/hyperledger/configtx
+        - ../../sharedVolume:/etc/hyperledger/sharedVolume
+    depends_on:
+      - couchdb.onesky.business.com
+      - ca.onesky.business.com
+    networks:
+      - network_1.0
+
+
+  couchdb.onesky.business.com:
+    container_name: couchdb.onesky.business.com
+    image: hyperledger/fabric-couchdb
+    
+    environment:
+      - COUCHDB_USER=root
+      - COUCHDB_PASSWORD=root
+    ports:
+      - 8984:5984
+    networks:
+      - network_1.0
+
+
+  cli.onesky.business.com:
+    container_name: cli.onesky.business.com
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=debug
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.onesky.business.com:7051
+      - CORE_PEER_LOCALMSPID=OneSkyMSP
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/onesky.business.com/users/Admin@onesky.business.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../../../BlockchainPractiseProject:/opt/gopath/src/github.com/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    networks:
+        - network_1.0
+    depends_on:
+      - peer0.onesky.business.com

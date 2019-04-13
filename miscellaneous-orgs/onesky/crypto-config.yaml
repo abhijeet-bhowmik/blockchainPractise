@@ -1,0 +1,11 @@
+PeerOrgs:
+  
+  - Name: onesky
+    Domain: onesky.business.com
+    EnableNodeOUs: false
+    
+    Template:
+      Count: 1
+  
+    Users:
+      Count: 3

@@ -1,0 +1,26 @@
+peer chaincode install -l node -n bank_chaincode -p /opt/gopath/src/github.com/Chaincode/bank -v v0
+
+
+peer chaincode upgrade -o orderer.business.com:7050 -C primarychannel -l node -n bank_chaincode -v v4 -c '{"Args":["init"]}' -P 'AND ("NewputMSP.member", "SentientMSP.member", "CapitalCityMSP.member")'
+
+peer chaincode package -n bank_chaincode -l node -p /opt/gopath/src/github.com/Chaincode/bank -v v5 /opt/gopath/src/github.com/sharedVolume/bank_chaincode_v5.pak
+
+
+peer chaincode install /opt/gopath/src/github.com/sharedVolume/bank_chaincode_v4.pak
+
+
+peer chaincode package -n trip_chaincode -l node -p /opt/gopath/src/github.com/Chaincode/trip -v v0 /opt/gopath/src/github.com/sharedVolume/trip_chaincode_v0.pak
+
+peer chaincode install /opt/gopath/src/github.com/sharedVolume/trip_chaincode_v0.pak
+
+
+
+peer chaincode instantiate -o orderer.business.com:7050 -C primarychannel -l node -n trip_chaincode -v v4 -c '{"Args":["init"]}' -P 'AND ("NewputMSP.member", "SentientMSP.member", "CapitalCityMSP.member")'
+
+
+
+["createTrip", "{\"from\":\"QATAR\",\"to\":\"DUBAI\",\"cost\":\"$100\",\"tripID\":\"12345678912345\",\"sellerID\":\"2\"}"]
+
+
+peer chaincode invoke -o orderer.business.com:7050 -C primarychannel -c '{"Args": ["createTrip", "{\"from\":\"QATAR\",\"to\":\"DUBAI\",\"cost\":\"$100\",\"tripID\":\"12345678912345\",\"sellerID\":\"2\", \"timeOfCreation\":\"9 January, 2019 9:38 AM\"}"]}' -n trip_chaincode
+--peerAddresses peer0.newput.business.com --peerAddresses peer0.capitalcity.business.com --peerAddresses peer0.sentient.business.com 

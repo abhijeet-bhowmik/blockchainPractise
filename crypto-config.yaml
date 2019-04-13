@@ -1,0 +1,42 @@
+
+OrdererOrgs:
+  
+  - Name: BusinessOrderer
+    Domain: business.com
+   
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  
+  - Name: newput
+    Domain: newput.business.com
+    EnableNodeOUs: false
+    
+    Template:
+      Count: 1
+  
+    Users:
+      Count: 3
+  
+  - Name: sentient
+    Domain: sentient.business.com
+    EnableNodeOUs: false
+    
+    Template:
+      Count: 1
+  
+    Users:
+      Count: 3
+  
+  - Name: capitalcity
+    Domain: capitalcity.business.com
+    EnableNodeOUs: false
+    
+    Template:
+      Count: 1
+  
+    Users:
+      Count: 3
+
+
